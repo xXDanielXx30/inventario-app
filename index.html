@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gestor de Asignación de Equipos</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px;
+      background: #f5f5f5;
+    }
+    h1 { text-align: center; color: #333; margin-bottom: 32px; }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    .panel {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .panel h2 {
+      margin-top: 0;
+      color: #2c3e50;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 12px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    input[type="text"], input[type="number"], select {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    input[type="text"]:focus, input[type="number"]:focus, select:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 4px rgba(52, 152, 219, 0.3);
+    }
+    button {
+      padding: 10px 16px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    button:hover { background: #2980b9; }
+    button.danger {
+      background: #e74c3c;
+    }
+    button.danger:hover {
+      background: #c0392b;
+    }
+    button.success {
+      background: #27ae60;
+    }
+    button.success:hover {
+      background: #229954;
+    }
+    .list-container {
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      padding: 12px;
+    }
+    .item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      background: #f9f9f9;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+    .item-row:last-child { border-bottom: none; margin-bottom: 0; }
+    .item-name {
+      font-weight: 600;
+      color: #2c3e50;
+      flex-grow: 1;
+    }
+    .item-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .item-actions button {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+    .full-width {
+      grid-column: 1 / -1;
+    }
+    .inventory-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .equipment-card {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-left: 4px solid #3498db;
+    }
+    .equipment-card h3 {
+      margin: 0 0 12px 0;
+      color: #2c3e50;
+    }
+    .equipment-card ul {
+      margin: 0;
+      padding: 0 0 0 20px;
+      list-style: none;
+    }
+    .equipment-card li {
+      padding: 6px 0;
+      color: #555;
+    }
+    .equipment-card li:before {
+      content: "✓ ";
+      color: #27ae60;
+      font-weight: 600;
+      margin-right: 6px;
+    }
+    .empty-message {
+      text-align: center;
+      color: #999;
+      padding: 20px;
+      font-style: italic;
+    }
+    .badge {
+      display: inline-block;
+      background: #ecf0f1;
+      color: #2c3e50;
+      padding: 4px 8px;
+      border-radius: 3px;
+      font-size: 12px;
+      margin-right: 6px;
+    }
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+      .inventory-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>📦 Gestor de Asignación de Equipos para Viajes</h1>
+
+  <div class="container">
+    <!-- Panel: Agregar Equipos -->
+    <div class="panel">
+      <h2>Equipos</h2>
+      <form id="addEquipmentForm">
+        <input id="equipmentName" type="text" placeholder="Nombre del equipo (ej: Juan, María)" required />
+        <button type="submit">+ Agregar Equipo</button>
+      </form>
+      <div class="list-container" id="equipmentList"></div>
+    </div>
+
+    <!-- Panel: Agregar Dispositivos -->
+    <div class="panel">
+      <h2>Dispositivos</h2>
+      <form id="addDeviceForm">
+        <input id="deviceName" type="text" placeholder="Nombre del dispositivo (ej: Laptop, Cámara)" required />
+        <button type="submit">+ Agregar Dispositivo</button>
+      </form>
+      <div class="list-container" id="deviceList"></div>
+    </div>
+  </div>
+
+  <!-- Panel: Asignar Dispositivos -->
+  <div class="panel full-width">
+    <h2>Asignar Dispositivos a Equipos</h2>
+    <form id="assignForm">
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 12px; align-items: end;">
+        <select id="selectEquipment" required>
+          <option value="">Selecciona un equipo...</option>
+        </select>
+        <select id="selectDevice" required>
+          <option value="">Selecciona un dispositivo...</option>
+        </select>
+        <input id="quantity" type="number" min="1" value="1" placeholder="Cantidad" />
+        <button type="submit" class="success">Asignar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Inventario -->
+  <div class="panel full-width">
+    <h2>Inventario de Equipos</h2>
+    <div class="inventory-grid" id="inventoryGrid"></div>
+  </div>
+
+  <script>
+    const apiEquipment = '/equipment';
+    const apiDevices = '/devices';
+    const apiAssignments = '/assignments';
+
+    // =====================
+    // FUNCIONES AUXILIARES
+    // =====================
+
+    function escapeHtml(unsafe) {
+      return String(unsafe)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    async function makeRequest(method, url, body = null) {
+      try {
+        const opts = {
+          method,
+          headers: { 'Content-Type': 'application/json' }
+        };
+        if (body) opts.body = JSON.stringify(body);
+        const res = await fetch(url, opts);
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || `Error ${res.status}`);
+        }
+        return await res.json();
+      } catch (err) {
+        alert(err.message);
+        throw err;
+      }
+    }
+
+    // =====================
+    // GESTIÓN DE EQUIPOS
+    // =====================
+
+    async function fetchEquipment() {
+      try {
+        const data = await makeRequest('GET', apiEquipment);
+        renderEquipmentList(data);
+        updateEquipmentSelects(data);
+      } catch (err) {
+        console.error('Error fetching equipment:', err);
+      }
+    }
+
+    function renderEquipmentList(equipment) {
+      const list = document.getElementById('equipmentList');
+      if (!equipment || equipment.length === 0) {
+        list.innerHTML = '<div class="empty-message">No hay equipos registrados</div>';
+        return;
+      }
+      list.innerHTML = equipment.map(eq => `
+        <div class="item-row">
+          <div class="item-name">${escapeHtml(eq.name)}</div>
+          <div class="item-actions">
+            <button data-action="deleteEquipment" data-id="${eq.id}" class="danger">Eliminar</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateEquipmentSelects(equipment) {
+      const select = document.getElementById('selectEquipment');
+      const currentValue = select.value;
+      select.innerHTML = '<option value="">Selecciona un equipo...</option>' +
+        equipment.map(eq => `<option value="${eq.id}">${escapeHtml(eq.name)}</option>`).join('');
+      select.value = currentValue;
+    }
+
+    document.getElementById('addEquipmentForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('equipmentName').value.trim();
+      if (!name) return;
+      try {
+        await makeRequest('POST', apiEquipment, { name });
+        document.getElementById('equipmentName').value = '';
+        fetchEquipment();
+        fetchAssignments();
+      } catch (err) {
+        console.error('Error adding equipment:', err);
+      }
+    });
+
+    // =====================
+    // GESTIÓN DE DISPOSITIVOS
+    // =====================
+
+    async function fetchDevices() {
+      try {
+        const data = await makeRequest('GET', apiDevices);
+        renderDeviceList(data);
+        updateDeviceSelects(data);
+      } catch (err) {
+        console.error('Error fetching devices:', err);
+      }
+    }
+
+    function renderDeviceList(devices) {
+      const list = document.getElementById('deviceList');
+      if (!devices || devices.length === 0) {
+        list.innerHTML = '<div class="empty-message">No hay dispositivos registrados</div>';
+        return;
+      }
+      list.innerHTML = devices.map(dev => `
+        <div class="item-row">
+          <div class="item-name">${escapeHtml(dev.name)}</div>
+          <div class="item-actions">
+            <button data-action="deleteDevice" data-id="${dev.id}" class="danger">Eliminar</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateDeviceSelects(devices) {
+      const select = document.getElementById('selectDevice');
+      const currentValue = select.value;
+      select.innerHTML = '<option value="">Selecciona un dispositivo...</option>' +
+        devices.map(dev => `<option value="${dev.id}">${escapeHtml(dev.name)}</option>`).join('');
+      select.value = currentValue;
+    }
+
+    document.getElementById('addDeviceForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('deviceName').value.trim();
+      if (!name) return;
+      try {
+        await makeRequest('POST', apiDevices, { name });
+        document.getElementById('deviceName').value = '';
+        fetchDevices();
+      } catch (err) {
+        console.error('Error adding device:', err);
+      }
+    });
+
+    // =====================
+    // GESTIÓN DE ASIGNACIONES
+    // =====================
+
+    async function fetchAssignments() {
+      try {
+        const data = await makeRequest('GET', apiAssignments);
+        renderInventory(data);
+      } catch (err) {
+        console.error('Error fetching assignments:', err);
+      }
+    }
+
+    function renderInventory(assignments) {
+      const grid = document.getElementById('inventoryGrid');
+      if (!assignments || assignments.length === 0) {
+        grid.innerHTML = '<div class="empty-message" style="grid-column: 1 / -1;">Sin asignaciones aún</div>';
+        return;
+      }
+
+      // Agrupar por equipo
+      const byEquipment = {};
+      assignments.forEach(a => {
+        if (!byEquipment[a.equipmentId]) {
+          byEquipment[a.equipmentId] = { name: a.equipmentName, devices: [] };
+        }
+        byEquipment[a.equipmentId].devices.push(a);
+      });
+
+      grid.innerHTML = Object.entries(byEquipment).map(([eqId, { name, devices }]) => `
+        <div class="equipment-card">
+          <h3>${escapeHtml(name)}</h3>
+          <ul>
+            ${devices.map(d => `
+              <li>
+                ${escapeHtml(d.deviceName)}
+                <span class="badge">×${d.quantity}</span>
+                <button data-action="removeAssignment" data-id="${d.id}" class="danger" style="padding: 4px 6px; font-size: 11px; margin-left: 6px;">×</button>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('assignForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const equipmentId = document.getElementById('selectEquipment').value;
+      const deviceId = document.getElementById('selectDevice').value;
+      const quantity = parseInt(document.getElementById('quantity').value) || 1;
+
+      if (!equipmentId || !deviceId) return;
+
+      try {
+        await makeRequest('POST', apiAssignments, { equipmentId, deviceId, quantity });
+        document.getElementById('quantity').value = 1;
+        document.getElementById('selectDevice').value = '';
+        fetchAssignments();
+      } catch (err) {
+        console.error('Error assigning device:', err);
+      }
+    });
+
+    // =====================
+    // EVENT DELEGATION
+    // =====================
+
+    document.addEventListener('click', async (e) => {
+      const btn = e.target.closest('button[data-action]');
+      if (!btn) return;
+
+      const action = btn.dataset.action;
+      const id = btn.dataset.id;
+
+      if (action === 'deleteEquipment') {
+        if (!confirm('¿Eliminar este equipo?')) return;
+        try {
+          await makeRequest('DELETE', `${apiEquipment}/${id}`);
+          fetchEquipment();
+          fetchAssignments();
+        } catch (err) {
+          console.error('Error deleting equipment:', err);
+        }
+      } else if (action === 'deleteDevice') {
+        if (!confirm('¿Eliminar este dispositivo?')) return;
+        try {
+          await makeRequest('DELETE', `${apiDevices}/${id}`);
+          fetchDevices();
+          fetchAssignments();
+        } catch (err) {
+          console.error('Error deleting device:', err);
+        }
+      } else if (action === 'removeAssignment') {
+        if (!confirm('¿Eliminar esta asignación?')) return;
+        try {
+          await makeRequest('DELETE', `${apiAssignments}/${id}`);
+          fetchAssignments();
+        } catch (err) {
+          console.error('Error removing assignment:', err);
+        }
+      }
+    });
+
+    // =====================
+    // INICIALIZAR
+    // =====================
+
+    async function init() {
+      await fetchEquipment();
+      await fetchDevices();
+      await fetchAssignments();
+    }
+
+    init();
+  </script>
+</body>
+</html>

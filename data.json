@@ -1,0 +1,46 @@
+{
+  "equipment": [
+    {
+      "id": 1,
+      "name": "YRTDRTD"
+    },
+    {
+      "id": 2,
+      "name": "UTM1"
+    }
+  ],
+  "devices": [
+    {
+      "id": 1,
+      "name": "YRUYRT"
+    },
+    {
+      "id": 2,
+      "name": "River"
+    },
+    {
+      "id": 3,
+      "name": "LAPTOP"
+    }
+  ],
+  "assignments": [
+    {
+      "id": 1,
+      "equipmentId": 1,
+      "deviceId": 1,
+      "quantity": 1
+    },
+    {
+      "id": 2,
+      "equipmentId": 2,
+      "deviceId": 2,
+      "quantity": 1
+    },
+    {
+      "id": 3,
+      "equipmentId": 2,
+      "deviceId": 3,
+      "quantity": 1
+    }
+  ]
+}
