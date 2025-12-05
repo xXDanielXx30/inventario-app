@@ -131,5 +131,15 @@ app.delete('/assignments/:id', (req, res) => {
 // Serve static files
 app.use(express.static(__dirname));
 
+// Health check for platform (useful to verify deploys)
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', time: new Date().toISOString() });
+});
 const PORT = process.env.PORT || 3000;
+// health check simple (útil para debug en deploy)
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', time: new Date().toISOString() });
+});
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+// bind to 0.0.0.0 so Railway (and Docker) can reach the server
+app.listen(PORT, '0.0.0.0', () => console.log(`Server running on http://0.0.0.0:${PORT}`));
