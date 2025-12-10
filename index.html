@@ -235,22 +235,7 @@
   </div>
 
   <div class="container">
-
-    <!-- EQUIPOS -->
-    <div class="panel">
-      <h2>Equipos</h2>
-      <form id="addEquipmentForm" class="no-print">
-        <input id="equipmentName" type="text" placeholder="Nombre del equipo (ej. UTM1)" required />
-        <button type="submit">+ Agregar Equipo</button>
-      </form>
-      <div class="list-container" id="equipmentList"></div>
-
-      <div style="margin-top:10px;">
-        <h3 style="font-size:14px;margin:8px 0 6px 0;">Panel de equipos (soltar dispositivos aquí)</h3>
-        <div class="equipment-cards" id="equipmentCards"></div>
-      </div>
-    </div>
-
+    
     <!-- DISPOSITIVOS -->
     <div class="panel">
       <h2>Dispositivos</h2>
@@ -270,8 +255,23 @@
       <div style="font-size:13px;color:#555;margin-bottom:6px;">Arrastra el ítem hacia un equipo para asignarlo.</div>
       <div class="list-container" id="deviceList" aria-live="polite"></div>
     </div>
+    <!-- EQUIPOS -->
+    <div class="panel">
+      <h2>Equipos</h2>
+      <form id="addEquipmentForm" class="no-print">
+        <input id="equipmentName" type="text" placeholder="Nombre del equipo (ej. UTM1)" required />
+        <button type="submit">+ Agregar Equipo</button>
+      </form>
+      <div class="list-container" id="equipmentList"></div>
+  
+    </div>
 
-  </div>
+      <div style="margin-top:10px;">
+        <h3 style="font-size:14px;margin:8px 0 6px 0;">Panel de equipos (soltar dispositivos aquí)</h3>
+        <div class="equipment-cards" id="equipmentCards"></div>
+      </div>
+    </div>
+
 
   <!-- CHECKLIST -->
   <div class="panel full-width checklist-panel">
@@ -528,8 +528,8 @@ function renderChecklist(){
               <th>SEF SUBE</th>
               <th>EVENTO BAJA</th>
               <th>REGRESA</th>
+              <th>ACCIONES</th>
               <th style="width:180px">Descripción</th>
-             <th>ACCIONES</th>
 
 
             </tr>
