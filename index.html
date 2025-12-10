@@ -107,6 +107,118 @@
       .print-only { display:block !important; }
       .container, .panel { box-shadow:none; border:none; }
     }
+    /* ============================= */
+/* RESPONSIVE - MÓVILES */
+/* ============================= */
+@media (max-width: 768px) {
+
+  body {
+    padding: 10px;
+    max-width: 100%;
+  }
+
+  h1 {
+    font-size: 20px;
+    padding: 0 5px;
+  }
+
+  /* Layout pasa a 1 columna */
+  .container {
+    display: block;
+  }
+
+  .panel {
+    margin-bottom: 18px;
+    padding: 12px;
+  }
+
+  .panel h2 {
+    font-size: 15px;
+  }
+
+  /* Top Row */
+  .top-row {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+
+  /* Formularios */
+  form {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  textarea,
+  select {
+    width: 100% !important;
+    font-size: 15px;
+  }
+
+  button {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 15px;
+  }
+
+  .small {
+    width: auto;
+    padding: 6px 10px;
+  }
+
+  /* Listas */
+  .list-container {
+    max-height: 300px;
+  }
+
+  /* Cada ítem ocupa más espacio */
+  .item-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .item-actions {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  /* Cards de equipos */
+  .equipment-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .assigned-item {
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+  }
+
+  .assigned-item button {
+    width: auto;
+  }
+
+  /* Checklist tabla → se vuelve scroll */
+  table.checklist {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  table.checklist th,
+  table.checklist td {
+    font-size: 12px;
+    padding: 4px;
+  }
+
+  .small-input {
+    width: 60px;
+  }
+}
+
   </style>
 </head>
 <body>
