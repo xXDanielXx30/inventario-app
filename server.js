@@ -9,8 +9,6 @@ app.use(express.json());
 
 const DATA_FILE = path.join(__dirname, 'data.json');
 
-// Estructura de datos: { equipment: [], devices: [], assignments: [] }
-
 function readData() {
   try {
     const raw = fs.readFileSync(DATA_FILE, 'utf8');
@@ -27,7 +25,7 @@ function writeData(data) {
 let db = readData();
 
 // =====================
-// EQUIPMENT ENDPOINTS
+// EQUIPMENT
 // =====================
 
 app.get('/equipment', (req, res) => {
@@ -37,10 +35,12 @@ app.get('/equipment', (req, res) => {
 app.post('/equipment', (req, res) => {
   const { name } = req.body;
   if (!name) return res.status(400).json({ error: 'name is required' });
+
   const id = db.equipment.length ? Math.max(...db.equipment.map(e => e.id)) + 1 : 1;
   const newEquipment = { id, name };
   db.equipment.push(newEquipment);
   writeData(db);
+
   res.status(201).json(newEquipment);
 });
 
@@ -48,15 +48,17 @@ app.delete('/equipment/:id', (req, res) => {
   const id = Number(req.params.id);
   const idx = db.equipment.findIndex(e => e.id === id);
   if (idx === -1) return res.status(404).json({ error: 'Equipment not found' });
+
   const removed = db.equipment.splice(idx, 1)[0];
-  // Eliminar asignaciones asociadas
+
   db.assignments = db.assignments.filter(a => a.equipmentId !== id);
+
   writeData(db);
   res.json(removed);
 });
 
 // =====================
-// DEVICES ENDPOINTS
+// DEVICES
 // =====================
 
 app.get('/devices', (req, res) => {
@@ -66,10 +68,12 @@ app.get('/devices', (req, res) => {
 app.post('/devices', (req, res) => {
   const { name } = req.body;
   if (!name) return res.status(400).json({ error: 'name is required' });
+
   const id = db.devices.length ? Math.max(...db.devices.map(d => d.id)) + 1 : 1;
   const newDevice = { id, name };
   db.devices.push(newDevice);
   writeData(db);
+
   res.status(201).json(newDevice);
 });
 
@@ -77,45 +81,47 @@ app.delete('/devices/:id', (req, res) => {
   const id = Number(req.params.id);
   const idx = db.devices.findIndex(d => d.id === id);
   if (idx === -1) return res.status(404).json({ error: 'Device not found' });
+
   const removed = db.devices.splice(idx, 1)[0];
-  // Eliminar asignaciones asociadas
+
   db.assignments = db.assignments.filter(a => a.deviceId !== id);
+
   writeData(db);
   res.json(removed);
 });
 
 // =====================
-// ASSIGNMENTS ENDPOINTS
+// ASSIGNMENTS
 // =====================
 
 app.get('/assignments', (req, res) => {
-  // Enriquecer asignaciones con nombres
-  const enriched = db.assignments.map(a => {
-    const eq = db.equipment.find(e => e.id === a.equipmentId);
-    const dev = db.devices.find(d => d.id === a.deviceId);
-    return {
-      ...a,
-      equipmentName: eq?.name || 'Unknown',
-      deviceName: dev?.name || 'Unknown'
-    };
-  });
+  const enriched = db.assignments.map(a => ({
+    ...a,
+    equipmentName: db.equipment.find(e => e.id === a.equipmentId)?.name || 'Unknown',
+    deviceName: db.devices.find(d => d.id === a.deviceId)?.name || 'Unknown'
+  }));
+
   res.json(enriched);
 });
 
 app.post('/assignments', (req, res) => {
   const { equipmentId, deviceId, quantity } = req.body;
-  if (!equipmentId || !deviceId) {
+
+  if (!equipmentId || !deviceId)
     return res.status(400).json({ error: 'equipmentId and deviceId are required' });
-  }
+
   const id = db.assignments.length ? Math.max(...db.assignments.map(a => a.id)) + 1 : 1;
+
   const newAssignment = {
     id,
     equipmentId: Number(equipmentId),
     deviceId: Number(deviceId),
     quantity: Number(quantity || 1)
   };
+
   db.assignments.push(newAssignment);
   writeData(db);
+
   res.status(201).json(newAssignment);
 });
 
@@ -123,23 +129,30 @@ app.delete('/assignments/:id', (req, res) => {
   const id = Number(req.params.id);
   const idx = db.assignments.findIndex(a => a.id === id);
   if (idx === -1) return res.status(404).json({ error: 'Assignment not found' });
+
   const removed = db.assignments.splice(idx, 1)[0];
   writeData(db);
+
   res.json(removed);
 });
 
-// Serve static files
-app.use(express.static(__dirname));
+// =====================
+// STATIC FILES
+// =====================
 
-// Health check for platform (useful to verify deploys)
+app.use(express.static(path.join(__dirname, 'public')));
+
+// =====================
+// HEALTH
+// =====================
+
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok', time: new Date().toISOString() });
+  res.status(200).json({ status: 'ok' });
 });
+
+// =====================
+// LISTEN
+// =====================
+
 const PORT = process.env.PORT || 3000;
-// health check simple (útil para debug en deploy)
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok', time: new Date().toISOString() });
-});
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
-// bind to 0.0.0.0 so Railway (and Docker) can reach the server
-app.listen(PORT, '0.0.0.0', () => console.log(`Server running on http://0.0.0.0:${PORT}`));
+app.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`));

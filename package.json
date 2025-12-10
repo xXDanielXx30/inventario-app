@@ -11,9 +11,18 @@
   "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.18.2"
+    "express": "^4.22.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xXDanielXx30/inventario-app.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/xXDanielXx30/inventario-app/issues"
+  },
+  "homepage": "https://github.com/xXDanielXx30/inventario-app#readme"
 }

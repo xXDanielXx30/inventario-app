@@ -8,12 +8,13 @@
     * { box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      max-width: 1200px;
+      max-width: 1300px;
       margin: 0 auto;
       padding: 16px;
       background: #f5f5f5;
     }
-    h1 { text-align: center; color: #333; margin-bottom: 32px; }
+    h1 { text-align: center; color: #333; margin-bottom: 20px; }
+    .top-row { display:flex; gap:16px; align-items:center; justify-content:space-between; margin-bottom:12px; }
     .container {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -23,34 +24,27 @@
     .panel {
       background: white;
       border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
     .panel h2 {
       margin-top: 0;
       color: #2c3e50;
       border-bottom: 2px solid #3498db;
-      padding-bottom: 12px;
+      padding-bottom: 10px;
+      font-size:16px;
     }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-    input[type="text"], input[type="number"], select {
-      padding: 10px;
+    form { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:10px; }
+    input[type="text"], input[type="number"], select, textarea {
+      padding: 8px;
       border: 1px solid #ddd;
       border-radius: 4px;
       font-size: 14px;
+      resize: vertical;
     }
-    input[type="text"]:focus, input[type="number"]:focus, select:focus {
-      outline: none;
-      border-color: #3498db;
-      box-shadow: 0 0 4px rgba(52, 152, 219, 0.3);
-    }
+    textarea { min-height:40px; width:100%; }
     button {
-      padding: 10px 16px;
+      padding: 8px 12px;
       background: #3498db;
       color: white;
       border: none;
@@ -58,413 +52,665 @@
       cursor: pointer;
       font-size: 14px;
       font-weight: 600;
-      transition: background 0.2s;
     }
     button:hover { background: #2980b9; }
-    button.danger {
-      background: #e74c3c;
-    }
-    button.danger:hover {
-      background: #c0392b;
-    }
-    button.success {
-      background: #27ae60;
-    }
-    button.success:hover {
-      background: #229954;
-    }
+    button.danger { background: #e74c3c; }
+    button.small { padding:6px 8px; font-size:13px; }
     .list-container {
-      max-height: 400px;
+      max-height: 380px;
       overflow-y: auto;
       border: 1px solid #eee;
       border-radius: 4px;
-      padding: 12px;
+      padding: 8px;
     }
     .item-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px;
+      padding: 8px;
       border-bottom: 1px solid #eee;
-      background: #f9f9f9;
+      background: #fbfbfb;
       border-radius: 4px;
       margin-bottom: 8px;
     }
-    .item-row:last-child { border-bottom: none; margin-bottom: 0; }
-    .item-name {
-      font-weight: 600;
-      color: #2c3e50;
-      flex-grow: 1;
-    }
-    .item-actions {
-      display: flex;
-      gap: 6px;
-    }
-    .item-actions button {
-      padding: 6px 10px;
-      font-size: 12px;
-    }
-    .full-width {
-      grid-column: 1 / -1;
-    }
-    .inventory-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 16px;
-    }
+    .item-left { display:flex; gap:8px; align-items:center; flex:1; min-width:0; }
+    .drag-handle { width:14px; height:14px; background:#ccc; border-radius:3px; display:inline-block; margin-right:6px; }
+    .item-name { font-weight:700; color:#222; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .item-desc { font-size:12px; color:#555; font-style:italic; margin-left:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .item-actions { display:flex; gap:6px; align-items:center; }
+    .full-width { grid-column: 1 / -1; }
+    .equipment-cards { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:12px; margin-top:10px; }
     .equipment-card {
-      background: white;
-      border-radius: 8px;
-      padding: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      border-left: 4px solid #3498db;
+      background:white; border-radius:8px; padding:10px; min-height:120px;
+      border:2px dashed transparent;
+      transition: border-color .12s, box-shadow .12s;
     }
-    .equipment-card h3 {
-      margin: 0 0 12px 0;
-      color: #2c3e50;
-    }
-    .equipment-card ul {
-      margin: 0;
-      padding: 0 0 0 20px;
-      list-style: none;
-    }
-    .equipment-card li {
-      padding: 6px 0;
-      color: #555;
-    }
-    .equipment-card li:before {
-      content: "✓ ";
-      color: #27ae60;
-      font-weight: 600;
-      margin-right: 6px;
-    }
-    .empty-message {
-      text-align: center;
-      color: #999;
-      padding: 20px;
-      font-style: italic;
-    }
-    .badge {
-      display: inline-block;
-      background: #ecf0f1;
-      color: #2c3e50;
-      padding: 4px 8px;
-      border-radius: 3px;
-      font-size: 12px;
-      margin-right: 6px;
-    }
-    @media (max-width: 768px) {
-      .container {
-        grid-template-columns: 1fr;
-      }
-      .inventory-grid {
-        grid-template-columns: 1fr;
-      }
+    .equipment-card.drag-over { border-color:#2ecc71; box-shadow:0 6px 18px rgba(46,204,113,0.12); }
+    .equipment-card h3 { margin:0 0 8px 0; font-size:15px; display:flex; justify-content:space-between; align-items:center; }
+    .assigned-list { max-height:160px; overflow:auto; border-top:1px solid #eee; padding-top:8px; margin-top:6px; }
+    .assigned-item { padding:6px; border-radius:6px; background:#f7f9fc; display:flex; justify-content:space-between; gap:8px; align-items:center; margin-bottom:6px; font-size:13px; }
+    .badge { display:inline-block; background: #ecf0f1; padding: 4px 8px; border-radius: 3px; font-size: 12px; }
+    .desc-small { display:block; color:#777; font-size:12px; font-style:italic; margin-left:6px; }
+    /* Checklist */
+    .checklist-panel { margin-top:12px; }
+    table.checklist { width:100%; border-collapse: collapse; font-size:13px; }
+    table.checklist th, table.checklist td { border:1px solid #ddd; padding:6px 8px; text-align:left; vertical-align:middle; }
+    table.checklist th { background:#f4f6f8; font-weight:700; font-size:12px; }
+    .controls { display:flex; gap:8px; align-items:center; }
+    .small-input { width:72px; }
+    .editable { background:#fff; border:1px solid transparent; padding:4px; border-radius:4px; }
+    .editable:focus { outline:none; border-color:#3498db; box-shadow:0 0 4px rgba(52,152,219,0.2); }
+    .print-only { display:none; }
+    @media print {
+      body { background: #fff; max-width:100%; }
+      .no-print { display:none !important; }
+      .print-only { display:block !important; }
+      .container, .panel { box-shadow:none; border:none; }
     }
   </style>
 </head>
 <body>
-  <h1>📦 Gestor de Asignación de Equipos para Viajes</h1>
+  <h1>📦 Gestor de Asignación de Equipos — Checklist & Drag&Drop</h1>
+
+  <div class="top-row no-print">
+    <div class="controls">
+      <button id="btnPrint" class="small">🖨️ Imprimir checklist</button>
+      <button id="btnClear" class="small danger">Limpiar todo</button>
+    </div>
+    <div style="font-size:13px;color:#555;">
+      Consejo: arrastra un dispositivo y suéltalo sobre un equipo para asignarlo. Luego edita campos si quieres.
+    </div>
+  </div>
 
   <div class="container">
-    <!-- Panel: Agregar Equipos -->
+
+    <!-- EQUIPOS -->
     <div class="panel">
       <h2>Equipos</h2>
-      <form id="addEquipmentForm">
-        <input id="equipmentName" type="text" placeholder="Nombre del equipo (ej: Juan, María)" required />
+      <form id="addEquipmentForm" class="no-print">
+        <input id="equipmentName" type="text" placeholder="Nombre del equipo (ej. UTM1)" required />
         <button type="submit">+ Agregar Equipo</button>
       </form>
       <div class="list-container" id="equipmentList"></div>
+
+      <div style="margin-top:10px;">
+        <h3 style="font-size:14px;margin:8px 0 6px 0;">Panel de equipos (soltar dispositivos aquí)</h3>
+        <div class="equipment-cards" id="equipmentCards"></div>
+      </div>
     </div>
 
-    <!-- Panel: Agregar Dispositivos -->
+    <!-- DISPOSITIVOS -->
     <div class="panel">
       <h2>Dispositivos</h2>
-      <form id="addDeviceForm">
-        <input id="deviceName" type="text" placeholder="Nombre del dispositivo (ej: Laptop, Cámara)" required />
-        <button type="submit">+ Agregar Dispositivo</button>
+      <input id="deviceSearch" 
+       type="text" 
+       placeholder="🔍 Buscar dispositivo..." 
+       style="width:100%; padding:8px; margin-bottom:10px; border:1px solid #ccc; border-radius:4px;">
+      <form id="addDeviceForm" class="no-print">
+        <input id="deviceName" type="text" placeholder="Nombre del dispositivo" required />
+        <input id="deviceQtyDefault" type="number" min="1" value="1" style="width:80px;" title="Cantidad por defecto al arrastrar" />
+        <textarea id="deviceDescription" rows="2" placeholder="Descripción / más detalles (opcional)"></textarea>
+        <div style="display:flex; gap:8px;">
+          <button type="submit">+ Agregar Dispositivo</button>
+          <button type="button" id="btnSeed" class="small">Cargar ejemplo (lista larga)</button>
+        </div>
       </form>
-      <div class="list-container" id="deviceList"></div>
+      <div style="font-size:13px;color:#555;margin-bottom:6px;">Arrastra el ítem hacia un equipo para asignarlo.</div>
+      <div class="list-container" id="deviceList" aria-live="polite"></div>
     </div>
+
   </div>
 
-  <!-- Panel: Asignar Dispositivos -->
-  <div class="panel full-width">
-    <h2>Asignar Dispositivos a Equipos</h2>
-    <form id="assignForm">
-      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 12px; align-items: end;">
-        <select id="selectEquipment" required>
-          <option value="">Selecciona un equipo...</option>
-        </select>
-        <select id="selectDevice" required>
-          <option value="">Selecciona un dispositivo...</option>
-        </select>
-        <input id="quantity" type="number" min="1" value="1" placeholder="Cantidad" />
-        <button type="submit" class="success">Asignar</button>
+  <!-- CHECKLIST -->
+  <div class="panel full-width checklist-panel">
+    <h2>CHECK LIST (por equipos)</h2>
+    <div style="display:flex; gap:12px; align-items:center; margin-bottom:8px;" class="no-print">
+      <label>Evento: <input id="eventName" type="text" placeholder="Villaflores" /></label>
+      <label style="margin-left:10px;">Fecha: <input id="eventDate" type="date" /></label>
+      <button id="btnRefresh" class="small">Actualizar checklist</button>
+    </div>
+
+    <div id="checklistContainer"></div>
+  </div>
+
+<script>
+/* Utilities */
+function escapeHtml(str){ return String(str || '').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function uid(prefix='id'){ return prefix + Math.random().toString(36).slice(2,9); }
+
+/* Local storage keys */
+const LS_DEV = 'gestor_devices_v1';
+const LS_EQUIP = 'gestor_equips_v1';
+const LS_ASSIGN = 'gestor_assigns_v1';
+
+/* Data access */
+function loadDevices(){ try{ return JSON.parse(localStorage.getItem(LS_DEV)||'[]'); }catch(e){return [];} }
+function saveDevices(d){ localStorage.setItem(LS_DEV, JSON.stringify(d||[])); }
+function loadEquips(){ try{ return JSON.parse(localStorage.getItem(LS_EQUIP)||'[]'); }catch(e){return [];} }
+function saveEquips(e){ localStorage.setItem(LS_EQUIP, JSON.stringify(e||[])); }
+function loadAssigns(){ try{ return JSON.parse(localStorage.getItem(LS_ASSIGN)||'[]'); }catch(e){return [];} }
+function saveAssigns(a){ localStorage.setItem(LS_ASSIGN, JSON.stringify(a||[])); }
+
+/* Initial rendering */
+function renderDeviceList(){
+  const list = loadDevices();
+  const el = document.getElementById('deviceList');
+  if(!list.length){ el.innerHTML = '<div style="color:#777">No hay dispositivos</div>'; return; }
+
+  el.innerHTML = list.map(d=>`
+    <div class="item-row" draggable="true" data-id="${d.id}">
+      <div class="item-left">
+        <span class="drag-handle" title="Arrastrar"></span>
+        <div style="min-width:0;">
+          <div class="item-name">${escapeHtml(d.name)}</div>
+          <div class="item-desc">${escapeHtml(d.description || '')}</div>
+        </div>
       </div>
-    </form>
-  </div>
+      <div class="item-actions">
+        <button class="small" data-action="editDevice" data-id="${d.id}" title="Editar">✏️</button>
+        <button class="small danger" data-action="delDevice" data-id="${d.id}" title="Eliminar">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+  // attach drag listeners
+  el.querySelectorAll('.item-row').forEach(r=>{
+    r.addEventListener('dragstart', onDeviceDragStart);
+  });
+}
+/* Search devices */
+document.addEventListener("DOMContentLoaded", () => {
+  const searchInput = document.getElementById("deviceSearch");
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
+      const term = searchInput.value.toLowerCase();
+      const list = loadDevices();
+      const filtered = list.filter(d =>
+        d.name.toLowerCase().includes(term) ||
+        (d.description || "").toLowerCase().includes(term)
+      );
 
-  <!-- Inventario -->
-  <div class="panel full-width">
-    <h2>Inventario de Equipos</h2>
-    <div class="inventory-grid" id="inventoryGrid"></div>
-  </div>
-
-  <script>
-    const apiEquipment = '/equipment';
-    const apiDevices = '/devices';
-    const apiAssignments = '/assignments';
-
-    // =====================
-    // FUNCIONES AUXILIARES
-    // =====================
-
-    function escapeHtml(unsafe) {
-      return String(unsafe)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
-
-    async function makeRequest(method, url, body = null) {
-      try {
-        const opts = {
-          method,
-          headers: { 'Content-Type': 'application/json' }
-        };
-        if (body) opts.body = JSON.stringify(body);
-        const res = await fetch(url, opts);
-        if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.error || `Error ${res.status}`);
-        }
-        return await res.json();
-      } catch (err) {
-        alert(err.message);
-        throw err;
-      }
-    }
-
-    // =====================
-    // GESTIÓN DE EQUIPOS
-    // =====================
-
-    async function fetchEquipment() {
-      try {
-        const data = await makeRequest('GET', apiEquipment);
-        renderEquipmentList(data);
-        updateEquipmentSelects(data);
-      } catch (err) {
-        console.error('Error fetching equipment:', err);
-      }
-    }
-
-    function renderEquipmentList(equipment) {
-      const list = document.getElementById('equipmentList');
-      if (!equipment || equipment.length === 0) {
-        list.innerHTML = '<div class="empty-message">No hay equipos registrados</div>';
+      const el = document.getElementById("deviceList");
+      if (!filtered.length) {
+        el.innerHTML = '<div style="color:#777">Sin resultados...</div>';
         return;
       }
-      list.innerHTML = equipment.map(eq => `
-        <div class="item-row">
-          <div class="item-name">${escapeHtml(eq.name)}</div>
+
+      el.innerHTML = filtered.map(d => `
+        <div class="item-row" draggable="true" data-id="${d.id}">
+          <div class="item-left">
+            <span class="drag-handle"></span>
+            <div>
+              <div class="item-name">${escapeHtml(d.name)}</div>
+              <div class="item-desc">${escapeHtml(d.description || '')}</div>
+            </div>
+          </div>
           <div class="item-actions">
-            <button data-action="deleteEquipment" data-id="${eq.id}" class="danger">Eliminar</button>
+            <button class="small" data-action="editDevice" data-id="${d.id}">✏️</button>
+            <button class="small danger" data-action="delDevice" data-id="${d.id}">🗑️</button>
           </div>
         </div>
       `).join('');
-    }
 
-    function updateEquipmentSelects(equipment) {
-      const select = document.getElementById('selectEquipment');
-      const currentValue = select.value;
-      select.innerHTML = '<option value="">Selecciona un equipo...</option>' +
-        equipment.map(eq => `<option value="${eq.id}">${escapeHtml(eq.name)}</option>`).join('');
-      select.value = currentValue;
-    }
-
-    document.getElementById('addEquipmentForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const name = document.getElementById('equipmentName').value.trim();
-      if (!name) return;
-      try {
-        await makeRequest('POST', apiEquipment, { name });
-        document.getElementById('equipmentName').value = '';
-        fetchEquipment();
-        fetchAssignments();
-      } catch (err) {
-        console.error('Error adding equipment:', err);
-      }
-    });
-
-    // =====================
-    // GESTIÓN DE DISPOSITIVOS
-    // =====================
-
-    async function fetchDevices() {
-      try {
-        const data = await makeRequest('GET', apiDevices);
-        renderDeviceList(data);
-        updateDeviceSelects(data);
-      } catch (err) {
-        console.error('Error fetching devices:', err);
-      }
-    }
-
-    function renderDeviceList(devices) {
-      const list = document.getElementById('deviceList');
-      if (!devices || devices.length === 0) {
-        list.innerHTML = '<div class="empty-message">No hay dispositivos registrados</div>';
-        return;
-      }
-      list.innerHTML = devices.map(dev => `
-        <div class="item-row">
-          <div class="item-name">${escapeHtml(dev.name)}</div>
-          <div class="item-actions">
-            <button data-action="deleteDevice" data-id="${dev.id}" class="danger">Eliminar</button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function updateDeviceSelects(devices) {
-      const select = document.getElementById('selectDevice');
-      const currentValue = select.value;
-      select.innerHTML = '<option value="">Selecciona un dispositivo...</option>' +
-        devices.map(dev => `<option value="${dev.id}">${escapeHtml(dev.name)}</option>`).join('');
-      select.value = currentValue;
-    }
-
-    document.getElementById('addDeviceForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const name = document.getElementById('deviceName').value.trim();
-      if (!name) return;
-      try {
-        await makeRequest('POST', apiDevices, { name });
-        document.getElementById('deviceName').value = '';
-        fetchDevices();
-      } catch (err) {
-        console.error('Error adding device:', err);
-      }
-    });
-
-    // =====================
-    // GESTIÓN DE ASIGNACIONES
-    // =====================
-
-    async function fetchAssignments() {
-      try {
-        const data = await makeRequest('GET', apiAssignments);
-        renderInventory(data);
-      } catch (err) {
-        console.error('Error fetching assignments:', err);
-      }
-    }
-
-    function renderInventory(assignments) {
-      const grid = document.getElementById('inventoryGrid');
-      if (!assignments || assignments.length === 0) {
-        grid.innerHTML = '<div class="empty-message" style="grid-column: 1 / -1;">Sin asignaciones aún</div>';
-        return;
-      }
-
-      // Agrupar por equipo
-      const byEquipment = {};
-      assignments.forEach(a => {
-        if (!byEquipment[a.equipmentId]) {
-          byEquipment[a.equipmentId] = { name: a.equipmentName, devices: [] };
-        }
-        byEquipment[a.equipmentId].devices.push(a);
+      el.querySelectorAll('.item-row').forEach(r => {
+        r.addEventListener('dragstart', onDeviceDragStart);
       });
 
-      grid.innerHTML = Object.entries(byEquipment).map(([eqId, { name, devices }]) => `
-        <div class="equipment-card">
-          <h3>${escapeHtml(name)}</h3>
-          <ul>
-            ${devices.map(d => `
-              <li>
-                ${escapeHtml(d.deviceName)}
-                <span class="badge">×${d.quantity}</span>
-                <button data-action="removeAssignment" data-id="${d.id}" class="danger" style="padding: 4px 6px; font-size: 11px; margin-left: 6px;">×</button>
-              </li>
-            `).join('')}
-          </ul>
+    });
+  }
+});
+
+function renderEquipmentList(){
+  const list = loadEquips();
+  const el = document.getElementById('equipmentList');
+  if(!list.length){ el.innerHTML = '<div style="color:#777">No hay equipos</div>'; } else {
+    el.innerHTML = list.map(q=>`
+      <div class="item-row">
+        <div class="item-left">
+          <div class="item-name">${escapeHtml(q.name)}</div>
         </div>
-      `).join('');
-    }
+        <div class="item-actions">
+          <button class="small" data-action="editEquip" data-id="${q.id}">✏️</button>
+          <button class="small danger" data-action="delEquip" data-id="${q.id}">🗑️</button>
+        </div>
+      </div>
+    `).join('');
+  }
+  // render equipment cards (drop targets)
+  renderEquipmentCards();
+}
 
-    document.getElementById('assignForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const equipmentId = document.getElementById('selectEquipment').value;
-      const deviceId = document.getElementById('selectDevice').value;
-      const quantity = parseInt(document.getElementById('quantity').value) || 1;
+function renderEquipmentCards(){
+  const equips = loadEquips();
+  const assigns = loadAssigns();
+  const container = document.getElementById('equipmentCards');
+  if(!equips.length){ container.innerHTML = '<div style="color:#777">Agrega un equipo para ver el panel</div>'; return; }
 
-      if (!equipmentId || !deviceId) return;
+  container.innerHTML = equips.map(eq=>`
+    <div class="equipment-card" data-eid="${eq.id}">
+      <h3>${escapeHtml(eq.name)} <button class="small" data-action="clearAssign" data-eid="${eq.id}" title="Eliminar asignaciones de este equipo">Limpiar</button></h3>
+      <div class="assigned-list">
+        ${ assigns.filter(a=>a.equipmentId===eq.id).map((a,idx)=>`
+          <div class="assigned-item" data-aid="${a.id}">
+            <div style="min-width:0">
+              <div style="font-weight:700">${escapeHtml(a.deviceName)} <span class="badge">x${a.quantity}</span></div>
+              <div style="font-size:12px;color:#666">${escapeHtml(a.deviceDescription||'')}</div>
+              <div style="font-size:12px;color:#333;margin-top:6px;">
+                <small>Resp:</small>
+                <span style="margin-left:6px">${escapeHtml(a.responsible||'')}</span>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <button class="small" data-action="editAssign" data-aid="${a.id}" title="Editar asignación">✏️</button>
+              <button class="small danger" data-action="delAssign" data-aid="${a.id}" title="Eliminar">🗑️</button>
+            </div>
+          </div>
+        `).join('') }
+      </div>
+    </div>
+  `).join('');
 
-      try {
-        await makeRequest('POST', apiAssignments, { equipmentId, deviceId, quantity });
-        document.getElementById('quantity').value = 1;
-        document.getElementById('selectDevice').value = '';
-        fetchAssignments();
-      } catch (err) {
-        console.error('Error assigning device:', err);
+  // attach drop listeners
+  container.querySelectorAll('.equipment-card').forEach(card=>{
+    card.addEventListener('dragover', ev=>{ ev.preventDefault(); card.classList.add('drag-over'); });
+    card.addEventListener('dragleave', ev=>{ card.classList.remove('drag-over'); });
+    card.addEventListener('drop', onDeviceDrop);
+  });
+}
+
+/* Drag & drop */
+function onDeviceDragStart(ev){
+  const id = ev.currentTarget.dataset.id;
+  ev.dataTransfer.setData('text/plain', id);
+  ev.dataTransfer.effectAllowed = 'copy';
+}
+function onDeviceDrop(ev){
+  ev.preventDefault();
+  const card = ev.currentTarget;
+  card.classList.remove('drag-over');
+  const deviceId = ev.dataTransfer.getData('text/plain');
+  const devices = loadDevices();
+  const device = devices.find(d=>d.id===deviceId);
+  if(!device){ alert('Dispositivo no encontrado'); return; }
+
+  // pedir cantidad y responsable (simple)
+  const qtyDefault = parseInt(document.getElementById('deviceQtyDefault').value) || 1;
+  let qty = prompt('Cantidad para asignar', String(qtyDefault));
+  if(qty===null) return;
+  qty = parseInt(qty) || qtyDefault;
+  const resp = prompt('Responsable (opcional)', '') || '';
+
+  const equipmentId = card.dataset.eid;
+  // crear asignación
+  const assigns = loadAssigns();
+  const newAssign = {
+    id: uid('a_'),
+    equipmentId,
+    equipmentName: (loadEquips().find(e=>e.id===equipmentId)||{}).name || 'Equipo',
+    deviceId: device.id,
+    deviceName: device.name,
+    deviceDescription: device.description || '',
+    quantity: qty,
+    responsible: resp,
+    sef_sube: '',
+    evento_baja: '',
+    regresa: ''
+  };
+  
+  assigns.push(newAssign);
+  saveAssigns(assigns);
+  renderEquipmentCards();
+  renderChecklist();
+}
+
+/* Assignments and checklist rendering */
+function renderChecklist(){
+  const assigns = loadAssigns();
+  const equips = loadEquips();
+  const container = document.getElementById('checklistContainer');
+  if(!equips.length){ container.innerHTML = '<div style="color:#777">Agrega equipos y asignaciones para ver la checklist.</div>'; return; }
+
+  // build table per equipment
+  let html = equips.map(eq=>{
+    const items = assigns.filter(a=>a.equipmentId===eq.id);
+    let rows = items.map((it, idx)=>
+      `<tr data-aid="${it.id}">
+        <td style="width:40px">${idx+1}</td>
+        <td><div style="font-weight:700">${escapeHtml(it.deviceName)}</div><div style="font-size:12px;color:#555">${escapeHtml(it.deviceDescription)}</div></td>
+        <td style="width:90px"><input class="editable small-input" data-field="quantity" value="${escapeHtml(it.quantity)}"></td>
+        <td style="width:150px"><input class="editable" data-field="responsible" value="${escapeHtml(it.responsible||'')}"></td>
+        <td style="text-align:center;">
+  <input type="checkbox" class="chk" data-field="sef_sube" ${it.sef_sube ? "checked" : ""}>
+</td>
+
+<td style="text-align:center;">
+  <input type="checkbox" class="chk" data-field="evento_baja" ${it.evento_baja ? "checked" : ""}>
+</td>
+
+<td style="text-align:center;">
+  <input type="checkbox" class="chk" data-field="regresa" ${it.regresa ? "checked" : ""}>
+</td>
+
+<td style="width:180px; text-align:center;">
+          <button class="small" data-action="zoom" data-aid="${it.id}">🔍</button>
+          <button class="small danger" data-action="delAssign" data-aid="${it.id}">🗑️</button>
+        </td>
+        <td>
+    <input class="editable" data-field="descripcion" 
+           placeholder="Escribe una descripción..."
+           value="${escapeHtml(it.descripcion || '')}">
+</td>
+
+      </tr>`
+    ).join('');
+    if(!rows) rows = `<tr><td colspan="8" style="color:#777">Sin asignaciones</td></tr>`;
+    return `
+      <div style="margin-bottom:18px;">
+        <h3 style="margin:0 0 6px 0;">${escapeHtml(eq.name)}</h3>
+        <table class="checklist">
+          <thead>
+            <tr>
+              <th>N°</th>
+              <th>DESCRIPCIÓN</th>
+              <th>CANTIDAD</th>
+              <th>RESPONSABLE</th>
+              <th>SEF SUBE</th>
+              <th>EVENTO BAJA</th>
+              <th>REGRESA</th>
+              <th style="width:180px">Descripción</th>
+             <th>ACCIONES</th>
+
+
+            </tr>
+          </thead>
+          <tbody>
+            ${rows}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = html;
+
+  // attach listeners for editable inputs and action buttons
+  // ==== CHECKBOX SAVE ON CLICK ====
+container.querySelectorAll('input.chk').forEach(chk => {  
+  chk.addEventListener('change', ev => {
+    const tr = chk.closest("tr");
+    const aid = tr.dataset.aid;
+    const field = chk.dataset.field;
+
+    const assigns = loadAssigns();
+    const a = assigns.find(x => x.id === aid);
+    if (!a) return;
+
+    a[field] = chk.checked ? 1 : 0; // Guardar como 1/0
+
+    saveAssigns(assigns);
+  });
+});
+
+  container.querySelectorAll('input.editable').forEach(inp=>{
+    inp.addEventListener('change', ev=>{
+      const tr = inp.closest('tr');
+      const aid = tr.dataset.aid;
+      const field = inp.dataset.field;
+      const assigns = loadAssigns();
+      const a = assigns.find(x=>x.id===aid);
+      if(!a) return;
+      // parse numeric for quantity
+      a[field] = field==='quantity' ? (parseInt(inp.value)||0) : inp.value;
+      saveAssigns(assigns);
+      renderEquipmentCards(); // update cards
+    });
+  });
+  container.querySelectorAll('button[data-action]').forEach(btn=>{
+    btn.addEventListener('click', ev=>{
+      const act = btn.dataset.action;
+      const aid = btn.dataset.aid;
+      if(act==='delAssign'){ 
+        if(confirm('Eliminar asignación?')){
+          let assigns = loadAssigns();
+          assigns = assigns.filter(x=>x.id!==aid);
+          saveAssigns(assigns);
+          renderEquipmentCards();
+          renderChecklist();
+        }
+      } else if(act==='zoom'){
+        const a = loadAssigns().find(x=>x.id===aid);
+        if(a) alert(`Dispositivo: ${a.deviceName}\nDescripción: ${a.deviceDescription}\nCantidad: ${a.quantity}\nResponsable: ${a.responsible}`);
       }
     });
+  });
+}
 
-    // =====================
-    // EVENT DELEGATION
-    // =====================
+/* Button events & form handle */
+document.getElementById('addDeviceForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  const name = document.getElementById('deviceName').value.trim();
+  if(!name) return;
+  const desc = document.getElementById('deviceDescription').value.trim();
+  const devs = loadDevices();
+  devs.push({ id: uid('d_'), name, description: desc });
+  saveDevices(devs);
+  document.getElementById('deviceName').value=''; document.getElementById('deviceDescription').value='';
+  renderDeviceList();
+});
 
-    document.addEventListener('click', async (e) => {
-      const btn = e.target.closest('button[data-action]');
-      if (!btn) return;
+document.getElementById('addEquipmentForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  const name = document.getElementById('equipmentName').value.trim();
+  if(!name) return;
+  const eqs = loadEquips();
+  eqs.push({ id: uid('e_'), name });
+  saveEquips(eqs);
+  document.getElementById('equipmentName').value='';
+  renderEquipmentList(); renderChecklist();
+});
 
-      const action = btn.dataset.action;
-      const id = btn.dataset.id;
+document.getElementById('btnSeed').addEventListener('click', ()=>{
+  // ejemplo rápido (usa parte de tu checklist)
+  const sample = [
+     "RACK UTM1",
+    "STARLINK",
+    "STARLINK MINI",
+    "ECOFLOW RIVER UTM1",
+    "ECOFLOW DELTA",
+    "ACCESS POINT",
+    "CABLE ETHERNET 40 MTS",
+    "CABLE ETHERNET 50 MTS",
+    "CABLE ETHERNET 15 MTS",
+    "CABLE ETHERNET 10 MTS",
+    "CABLE ETHERNET 20 MTS",
+    "CABLE ETHERNET 90 MTS",
+    "LAPTOP PROBOOK HP",
+    "CINTA TRANSPORTADORA",
+    "CONECTORES RJ45",
+    "CAJA DE LAPICEROS",
+    "CINTILLAS 650 PZAS",
+    "REPUESTO DE NAVAJAS",
+    "ADAPTADO USB A C",
+    "TESTER",
+    "KIT DE DESARMADORES 10 PZAS",
+    "PINZA DE PUNTA",
+    "PINZA DE ELECTRICISTA",
+    "CUTER",
+    "HOJAS BLANCAS PAQUETE",
+    "CRIMPIADORAS",
+    "CINTA METALICA",
+    "CINTA MASQUIN",
+    "MILTICONTACTO",
+    "EXTENCIONES NARANJAS DE 10MTS",
+    "PATCHCORD",
+    "SCANNER",
+    "CABLES DE CARGADOR SCANNERS",
+    "TONER 136X NG",
+    "EXTENSIÓN DE BARRA 60 MTS",
+    "PROTECTOR DE PISO",
+    "RADIO UTM 1 CON MANOS LIBRES",
+    "RADIO UTM 2 CON MANOS LIBRES",
+    "RADIO UTM 3 CON MANOS LIBRES",
+    "RADIO UTM 4 CON MANOS LIBRES",
+    "RADIO UTM 5 CON MANOS LIBRES",
+    "RADIO UTM 6 CON MANOS LIBRES",
+    "CENTRO DE CARGA",
+    "TABLETS",
+    "MESA GRANDE",
+    "BOBINA 300 MTS",
 
-      if (action === 'deleteEquipment') {
-        if (!confirm('¿Eliminar este equipo?')) return;
-        try {
-          await makeRequest('DELETE', `${apiEquipment}/${id}`);
-          fetchEquipment();
-          fetchAssignments();
-        } catch (err) {
-          console.error('Error deleting equipment:', err);
-        }
-      } else if (action === 'deleteDevice') {
-        if (!confirm('¿Eliminar este dispositivo?')) return;
-        try {
-          await makeRequest('DELETE', `${apiDevices}/${id}`);
-          fetchDevices();
-          fetchAssignments();
-        } catch (err) {
-          console.error('Error deleting device:', err);
-        }
-      } else if (action === 'removeAssignment') {
-        if (!confirm('¿Eliminar esta asignación?')) return;
-        try {
-          await makeRequest('DELETE', `${apiAssignments}/${id}`);
-          fetchAssignments();
-        } catch (err) {
-          console.error('Error removing assignment:', err);
-        }
-      }
-    });
+    "RACK UTM2",
+    "STARLINK",
+    "ECOFLOW RIVER UTM2",
+    "ECOFLOW DELTA",
+    "ACCESS POINT",
+    "CABLE ETHERNET 40 MTS",
+    "CABLE ETHERNET 50 MTS",
+    "CABLE ETHERNET 15 MTS",
+    "CABLE ETHERNET 10 MTS",
+    "CABLE ETHERNET 70 MTS",
+    "CABLE ETHERNET 20 MTS",
+    "CABLE ETHERNET 90 MTS",
+    "LAPTOP PROBOOK HP",
+    "CINTA TRANSPORTADORA",
+    "CONECTORES RJ45",
+    "CAJA DE LAPICEROS",
+    "CINTILLAS 650 PZAS",
+    "REPUESTO DE NAVAJAS",
+    "ADAPTADO USB A C",
+    "TESTER",
+    "KIT DE DESARMADORES 10 PZAS",
+    "PINZA DE PUNTA",
+    "PINZA DE ELECTRICISTA",
+    "CUTER CON REPUESTO DE NAVAJAS",
+    "HOJAS BLANCAS PAQUETE",
+    "CRIMPIADORAS",
+    "CINTA METALICA",
+    "CINTA MASQUIN",
+    "MILTICONTACTO",
+    "EXTENCIONES NARANJAS DE 10MTS",
+    "PATCHCORD",
+    "SCANNER USB",
+    "TONER 136X NG",
+    "EXTENSIÓN DE BARRA 60 MTS",
+    "PROTECTOR DE PISO",
+    "RADIO UTM 7 CON MANOS LIBRES",
+    "RADIO UTM 8 CON MANOS LIBRES",
+    "RADIO UTM 9 CON MANOS LIBRES",
+    "RADIO UTM 10 CON MANOS LIBRES",
+    "RADIO UTM 11 CON MANOS LIBRES",
+    "CENTRO DE CARGA",
+    "TABLETS",
+    "ESCALERA",
+    "MESA PEQUEÑA",
+    "BOBINA 300 MTS"
+  ];
+  const devs = loadDevices();
+  sample.forEach(name=>{
+    devs.push({ id: uid('d_'), name, description: '' });
+  });
+  saveDevices(devs);
+  renderDeviceList();
+});
 
-    // =====================
-    // INICIALIZAR
-    // =====================
+/* Delegated actions: edit/delete device & equip & assign actions from lists/cards */
+document.addEventListener('click', ev=>{
+  const btn = ev.target.closest('button[data-action]');
+  if(!btn) return;
+  const act = btn.dataset.action;
+  const id = btn.dataset.id;
+  if(act==='delDevice'){
+    if(!confirm('Eliminar dispositivo?')) return;
+    let devs = loadDevices(); devs = devs.filter(d=>d.id!==id); saveDevices(devs);
+    // remove related assignments
+    let assigns = loadAssigns(); assigns = assigns.filter(a=>a.deviceId!==id); saveAssigns(assigns);
+    renderDeviceList(); renderEquipmentCards(); renderChecklist();
+  }
+  if(act==='editDevice'){
+    const devs = loadDevices();
+    const d = devs.find(x=>x.id===id);
+    if(!d) return;
+    const newName = prompt('Editar nombre', d.name);
+    if(newName===null) return;
+    const newDesc = prompt('Editar descripción', d.description||'') || '';
+    d.name = newName.trim() || d.name;
+    d.description = newDesc;
+    saveDevices(devs);
+    // update existing assignments' device name/desc
+    const assigns = loadAssigns();
+    assigns.forEach(a=>{ if(a.deviceId===d.id){ a.deviceName=d.name; a.deviceDescription=d.description; }});
+    saveAssigns(assigns);
+    renderDeviceList(); renderEquipmentCards(); renderChecklist();
+  }
+  if(act==='delEquip'){
+    if(!confirm('Eliminar equipo y sus asignaciones?')) return;
+    let eqs = loadEquips(); eqs = eqs.filter(e=>e.id!==id); saveEquips(eqs);
+    let assigns = loadAssigns(); assigns = assigns.filter(a=>a.equipmentId!==id); saveAssigns(assigns);
+    renderEquipmentList(); renderChecklist();
+  }
+  if(act==='editEquip'){
+    const eqs = loadEquips();
+    const e = eqs.find(x=>x.id===id);
+    if(!e) return;
+    const newName = prompt('Editar nombre del equipo', e.name);
+    if(newName===null) return;
+    e.name = newName.trim() || e.name;
+    saveEquips(eqs);
+    // update assignment names
+    const assigns = loadAssigns();
+    assigns.forEach(a=>{ if(a.equipmentId===e.id) a.equipmentName=e.name; });
+    saveAssigns(assigns);
+    renderEquipmentList(); renderEquipmentCards(); renderChecklist();
+  }
+  if(act==='clearAssign'){
+    const eid = btn.dataset.eid;
+    if(!confirm('Eliminar todas las asignaciones de este equipo?')) return;
+    let assigns = loadAssigns(); assigns = assigns.filter(a=>a.equipmentId!==eid); saveAssigns(assigns);
+    renderEquipmentCards(); renderChecklist();
+  }
+});
 
-    async function init() {
-      await fetchEquipment();
-      await fetchDevices();
-      await fetchAssignments();
-    }
+/* Additional buttons */
+document.getElementById('btnRefresh').addEventListener('click', renderChecklist);
+document.getElementById('btnPrint').addEventListener('click', ()=>{ window.print(); });
+document.getElementById('btnClear').addEventListener('click', ()=>{
+  if(!confirm('Borrar datos locales (dispositivos, equipos y asignaciones)?')) return;
+  localStorage.removeItem(LS_DEV); localStorage.removeItem(LS_EQUIP); localStorage.removeItem(LS_ASSIGN);
+  renderDeviceList(); renderEquipmentList(); renderChecklist();
+});
 
-    init();
-  </script>
+/* Deleting assignment from equipment card (delegated) */
+document.addEventListener('click', ev=>{
+  const btn = ev.target.closest('button[data-action="delAssign"]');
+  if(!btn) return;
+  const aid = btn.dataset.aid;
+  if(!confirm('Eliminar asignación?')) return;
+  let assigns = loadAssigns(); assigns = assigns.filter(x=>x.id!==aid); saveAssigns(assigns);
+  renderEquipmentCards(); renderChecklist();
+});
+
+/* Edit assign from equipment card */
+document.addEventListener('click', ev=>{
+  const btn = ev.target.closest('button[data-action="editAssign"]');
+  if(!btn) return;
+  const aid = btn.dataset.aid;
+  const assigns = loadAssigns(); const a = assigns.find(x=>x.id===aid);
+  if(!a) return;
+  const qty = prompt('Cantidad', String(a.quantity)); if(qty===null) return;
+  a.quantity = parseInt(qty)||a.quantity;
+  const resp = prompt('Responsable', a.responsible||''); if(resp===null) return;
+  a.responsible = resp;
+  saveAssigns(assigns);
+  renderEquipmentCards(); renderChecklist();
+});
+
+/* Init */
+(function init(){
+  // ensure some initial state if empty (optional)
+  if(!localStorage.getItem(LS_DEV) && !localStorage.getItem(LS_EQUIP)){
+    // no auto seed by default; user can click "Cargar ejemplo"
+  }
+  renderDeviceList(); renderEquipmentList(); renderChecklist();
+})();
+</script>
 </body>
 </html>
